@@ -1,0 +1,18 @@
+Female heart reference geometry
+
+Source: Human Reference Atlas / HuBMAP CCF 3D Reference Object Library
+Model: heart-female v1.3 (3d-vh-f-heart.glb), derived from the Visible Human
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+
+Citation:
+Browne, K., Cross, L. E., Herr II, B. W., Record, L., Quardokus, E., Bueckle, A., Börner, K. (2021).
+HuBMAP CCF 3D Reference Object Library.
+https://hubmapconsortium.github.io/ccf/pages/ccf-3d-reference-library.html
+https://humanatlas.io/
+
+Downloaded from:
+https://cdn.humanatlas.io/digital-objects/ref-organ/heart-female/v1.3/assets/3d-vh-f-heart.glb
+
+The mesh in this file is unmodified. CardioCare applies its own lighting, materials,
+labels, and a simplified heartbeat animation at runtime.
