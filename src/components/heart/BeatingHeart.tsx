@@ -9,7 +9,7 @@ import {
   DoubleSide,
   Group,
   Mesh,
-  MeshStandardMaterial,
+  MeshPhysicalMaterial,
   PerspectiveCamera,
 } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
@@ -51,18 +51,10 @@ export function Scene({ spin, showLabels, selected, hovered, onSelect, onHover }
   return (
     <>
       <color attach="background" args={["#090b10"]} />
-      <ambientLight intensity={0.65} />
-      <hemisphereLight args={["#ffe4ea", "#24304a", 0.9]} />
-      <directionalLight position={[4.5, 6, 3.5]} intensity={3.2} color="#fff7f2" />
-      <directionalLight position={[-5, 2.2, -2]} intensity={1.4} color="#c5d4ff" />
-      <spotLight
-        position={[0.4, 3.2, -3.4]}
-        angle={0.55}
-        penumbra={0.85}
-        intensity={12}
-        color="#ff4d67"
-        distance={12}
-      />
+      <ambientLight intensity={0.4} />
+      <hemisphereLight args={["#ffe6d5", "#1c2436", 0.5]} />
+      <directionalLight position={[4.5, 6, 3.5]} intensity={2.6} color="#FFE6D5" />
+      <directionalLight position={[-4.2, 1.6, -2.4]} intensity={0.45} color="#6C8CFF" />
       <QuietBoundary>
         <Suspense fallback={null}>
           <Environment preset="studio" environmentIntensity={0.42} />
@@ -176,12 +168,17 @@ function HeartMesh({
   const label = useRef<Group>(null);
   const material = useMemo(() => {
     const valve = part.entry.group === "av-valve" || part.entry.group === "semilunar";
-    return new MeshStandardMaterial({
+    return new MeshPhysicalMaterial({
       color: new Color(part.entry.color),
-      roughness: valve ? 0.32 : 0.48,
+      roughness: valve ? 0.25 : 0.45,
       metalness: 0.02,
-      emissive: new Color(part.entry.color),
-      emissiveIntensity: valve ? 0.18 : 0.28,
+      clearcoat: 0.3,
+      clearcoatRoughness: 0.4,
+      emissive: new Color("#FF5A6E"),
+      emissiveIntensity: 0.04,
+      transparent: valve,
+      opacity: valve ? 0.85 : 1,
+      depthWrite: true,
       side: DoubleSide,
     });
   }, [part.entry]);
@@ -203,20 +200,20 @@ function HeartMesh({
     if (label.current) label.current.position.copy(part.center).add(spread);
 
     const surface = current.material;
-    if (!(surface instanceof MeshStandardMaterial)) return;
+    if (!(surface instanceof MeshPhysicalMaterial)) return;
     const focus = heartClock.selected ?? heartClock.hovered;
     const active = focus === part.id;
-    if (surface.transparent) {
-      surface.transparent = false;
+    const valve = part.entry.group === "av-valve" || part.entry.group === "semilunar";
+    if (valve) {
+      surface.transparent = true;
+      surface.opacity = 0.85;
       surface.depthWrite = true;
-      surface.opacity = 1;
-      surface.needsUpdate = true;
     }
     const beat =
       part.entry.group === "atrium" || part.entry.group === "av-valve"
         ? heartClock.atrial
         : heartClock.ventricular;
-    surface.emissiveIntensity = (active ? 0.7 : 0.28) + beat * 0.25;
+    surface.emissiveIntensity = (active ? 0.25 : 0.04) + beat * 0.06;
   });
 
   const focus = selected ?? hovered;
